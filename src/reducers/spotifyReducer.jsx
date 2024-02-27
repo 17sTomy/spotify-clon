@@ -18,7 +18,10 @@ export const spotifyReducer = (state, action) => {
         token: action.payload,
       };
     case TYPES.SET_USER:
-      return {};
+      return {
+        ...state,
+        userInfo: action.payload,
+      };
     case TYPES.SET_PLAYLISTS:
       return {
         ...state,

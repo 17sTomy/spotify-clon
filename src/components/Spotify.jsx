@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import styled from "styled-components";
 import StateContext from "../context/StateContext";
 import Sidebar from "./Sidebar";
@@ -7,7 +7,6 @@ import Footer from "./Footer";
 import Body from "./Body";
 
 export default function Spotify() {
-
   return (
     <Container>
       <div className="spotify__body">

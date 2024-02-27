@@ -40,5 +40,6 @@ const Container = styled.div`
     border: none;
     font-size: 1.4rem;
     cursor: pointer;
+    outline: none;
   }
 `;

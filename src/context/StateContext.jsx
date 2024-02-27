@@ -1,4 +1,4 @@
-import { createContext, useReducer, useState } from "react";
+import { createContext, useReducer } from "react";
 import { TYPES } from "../actions/spotifyActions";
 import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
 import axios from 'axios';
@@ -7,7 +7,7 @@ const StateContext = createContext();
 
 const StateProvider = ({ children }) => {
   const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
-  const [token, setToken] = useState(null);
+  const { token } = state;
 
   const getAccessToken = async () => {
     const client_id = "593ebe3ad8e74156a28c6f7d9fdee82f";
@@ -26,12 +26,11 @@ const StateProvider = ({ children }) => {
     window.location.href = `${api_uri}?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope.join(" ")}&response_type=token&show_dialog=true`;
   };
 
-  const saveToken = () => {
+  const setToken = () => {
     const hash = window.location.hash;
     if (hash) {
       const token = hash.substring(1).split("&")[0].split("=")[1];
-      dispatch({ type: TYPES.SET_TOKEN, payload: token })
-      setToken(token);
+      dispatch({ type: TYPES.SET_TOKEN, payload: token });
     };
   };
 
@@ -40,7 +39,7 @@ const StateProvider = ({ children }) => {
       "https://api.spotify.com/v1/me", 
       {
         headers: {
-          Authorization: `Bearer ${state.token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       }
@@ -49,9 +48,9 @@ const StateProvider = ({ children }) => {
       userId: data.id,
       userUrl: data.external_urls.spotify,
       name: data.display_name,
+      image: data.images[0],
     };
-    console.log(userInfo);
-    console.log(data);
+    return userInfo;
   };
 
   const getPlaylistData = async () => {
@@ -60,7 +59,7 @@ const StateProvider = ({ children }) => {
         "https://api.spotify.com/v1/me/playlists",
         {
           headers: {
-            Authorization: `Bearer ${state.token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
@@ -69,8 +68,6 @@ const StateProvider = ({ children }) => {
       const playlists = items.map(({ name, id }) => {
         return { name, id };
       });
-      dispatch({ type: TYPES.SET_PLAYLISTS, payload: playlists })
-      // console.log(playlists);
       return playlists;
     } catch (error) {
       console.log("An error has ocurred: ", error);
@@ -80,7 +77,7 @@ const StateProvider = ({ children }) => {
   const data = {
     token,
     getAccessToken,
-    saveToken,
+    setToken,
     getUserInfo,
     getPlaylistData,
   };

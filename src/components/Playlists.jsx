@@ -1,15 +1,18 @@
-import { useContext, useEffect, useState } from "react"
-import styled from "styled-components";
+import { useContext, useEffect, useReducer } from "react"
 import StateContext from "../context/StateContext"
+import { TYPES } from "../actions/spotifyActions";
+import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
 import Loader from "../assets/Loader";
+import styled from "styled-components";
 
 export default function Playlists() {
-  const [playlists, setPlaylists] = useState(null);
-  const { token, getPlaylistData } = useContext(StateContext)
+  const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
+  const { token, playlists } = state;
+  const { getPlaylistData } = useContext(StateContext);
 
   useEffect(() => {
     getPlaylistData().then(playlists => {
-			setPlaylists(playlists);
+      dispatch({ type: TYPES.SET_PLAYLISTS, payload: playlists });
 		});
   }, [token]);
 
