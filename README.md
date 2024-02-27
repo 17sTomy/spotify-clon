@@ -1,3 +1,3 @@
-# Spotify Clon
+# Spotify Clone
 
 
