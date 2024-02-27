@@ -1,18 +1,26 @@
-import { useContext, useEffect } from "react";
+import { useState, useRef } from "react";
 import styled from "styled-components";
-import StateContext from "../context/StateContext";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Body from "./Body";
 
 export default function Spotify() {
+  const [navBackground, setNavBackground] = useState(false);
+  const bodyRef = useRef();
+
+  const bodyScrolled = () => {
+    bodyRef.current.scrollTop >= 30
+      ? setNavBackground(true)
+      : setNavBackground(false);
+  };
+
   return (
     <Container>
       <div className="spotify__body">
         <Sidebar />
-        <div className="body">
-          <Navbar />
+        <div className="body" ref={bodyRef} onScroll={bodyScrolled}>
+          <Navbar navBackground={navBackground} />
           <div className="body__contents">
             <Body />
           </div>

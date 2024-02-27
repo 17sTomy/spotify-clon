@@ -7,7 +7,7 @@ export const spotifyInitialState = {
   currentPlaying: null,
   playerState: false,
   selectedPlaylist: null,
-  selectedPlaylistId: "37i9dQZF1E37jO8SiMT0yN",
+  selectedPlaylistId: "5ISoQMku8LAmIUFKYSBX3L",
 };
 
 export const spotifyReducer = (state, action) => {
@@ -32,7 +32,10 @@ export const spotifyReducer = (state, action) => {
     case TYPES.SET_PLAYER_STATE:
       return {};
     case TYPES.SET_PLAYLIST:
-      return {};
+      return {
+        ...state,
+        selectedPlaylist: action.payload,
+      };
     case TYPES.SET_PLAYLIST_ID:
       return {};
     default:
