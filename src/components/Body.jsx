@@ -4,16 +4,45 @@ import { TYPES } from "../actions/spotifyActions";
 import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
 import styled from "styled-components";
 import { AiFillClockCircle } from "react-icons/ai";
+import axios from "axios";
 
 export default function Body() {
   const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
-  const { token, selectedPlaylistId, selectedPlaylist } = state;
-  const { getInitialPlaylist } = useContext(StateContext);
+  const { selectedPlaylistId, selectedPlaylist } = state;
+  const { token } = useContext(StateContext);
 
   useEffect(() => {
-    getInitialPlaylist().then(selectedPlaylist => {
+    const getInitialPlaylist = async () => {
+      const response = await axios.get(
+        `https://api.spotify.com/v1/playlists/${selectedPlaylistId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const selectedPlaylist = {
+        id: response.data.id,
+        name: response.data.name,
+        description: response.data.description.startsWith("<a")
+          ? ""
+          : response.data.description,
+        image: response.data.images[0].url,
+        tracks: response.data.tracks.items.map(({ track }) => ({
+          id: track.id,
+          name: track.name,
+          artists: track.artists.map((artist) => artist.name),
+          image: track.album.images[2].url,
+          duration: track.duration_ms,
+          album: track.album.name,
+          context_uri: track.album.uri,
+          track_number: track.track_number,
+        })),
+      };
       dispatch({ type: TYPES.SET_PLAYLIST, payload: selectedPlaylist });
-    });
+    };
+    getInitialPlaylist();
   }, [token, selectedPlaylistId]);
 
   const msToMinutesAndSeconds = (ms) => {

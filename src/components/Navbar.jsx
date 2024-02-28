@@ -4,17 +4,41 @@ import { TYPES } from "../actions/spotifyActions";
 import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
 import styled from "styled-components";
 import { FaSearch } from "react-icons/fa";
+import axios from "axios";
 
 export default function Navbar({ navBackground }) {
   const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
   const { userInfo } = state;
-  const { getUserInfo } = useContext(StateContext);
+  const { token } = useContext(StateContext);
+
+  // useEffect(() => {
+  //   getUserInfo().then(userInfo => {
+  //     dispatch({ type: TYPES.SET_USER, payload: userInfo })
+  //   });
+  // }, []);
 
   useEffect(() => {
-    getUserInfo().then(userInfo => {
+    const getUserInfo = async () => {
+      const { data } = await axios.get(
+        "https://api.spotify.com/v1/me", 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const userInfo = {
+        userId: data.id,
+        userUrl: data.external_urls.spotify,
+        name: data.display_name,
+        image: data.images[0],
+      };
       dispatch({ type: TYPES.SET_USER, payload: userInfo })
-    });
-  }, []);
+    };
+
+    getUserInfo();
+  });
 
   return (
     <Container navBackground={navBackground}>
