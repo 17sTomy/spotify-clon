@@ -1,13 +1,14 @@
-import { createContext, useReducer } from "react";
+import { createContext, useReducer, useState } from "react";
 import { TYPES } from "../actions/spotifyActions";
 import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
-import axios from 'axios';
 
 const StateContext = createContext();
 
 const StateProvider = ({ children }) => {
   const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
   const { token } = state;
+  const [playlists, setPlaylists] = useState([]);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
 
   const getAccessToken = async () => {
     const client_id = "593ebe3ad8e74156a28c6f7d9fdee82f";
@@ -37,6 +38,10 @@ const StateProvider = ({ children }) => {
     token,
     getAccessToken,
     setToken,
+    playlists,
+    setPlaylists,
+    selectedPlaylist, 
+    setSelectedPlaylist,
   };
   
   return <StateContext.Provider value={data}>{children}</StateContext.Provider>

@@ -9,7 +9,42 @@ import axios from 'axios';
 export default function Playlists() {
   const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
   const { playlists } = state;
-  const { token } = useContext(StateContext);
+  const { token, setPlaylists, setSelectedPlaylist } = useContext(StateContext);
+
+  const selectPlaylist = async (id) => {
+    console.log(id);
+    const response = await axios.get(
+      `https://api.spotify.com/v1/playlists/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    
+    const selectedPlaylist = {
+      id: response.data.id,
+      name: response.data.name,
+      description: response.data.description.startsWith("<a")
+        ? ""
+        : response.data.description,
+      image: response.data.images[0].url,
+      tracks: response.data.tracks.items.map(({ track }) => ({
+        id: track.id,
+        name: track.name,
+        artists: track.artists.map((artist) => artist.name),
+        image: track.album.images[2].url,
+        duration: track.duration_ms,
+        album: track.album.name,
+        context_uri: track.album.uri,
+        track_number: track.track_number,
+      })),
+    };
+
+    setSelectedPlaylist(selectedPlaylist);
+    dispatch({ type: TYPES.SET_PLAYLIST, payload: selectedPlaylist });
+  };
 
   useEffect(() => {
     const getPlaylistData = async () => {
@@ -28,6 +63,7 @@ export default function Playlists() {
           return { name, id };
         });
         console.log(playlists);
+        setPlaylists(playlists)
         dispatch({ type: TYPES.SET_PLAYLISTS, payload: playlists });
       } catch (error) {
         console.log("An error has ocurred: ", error);
@@ -41,7 +77,7 @@ export default function Playlists() {
 			<ul>
       	{ playlists ? (
 					playlists.map(({ name, id }) => {
-      	    return <li key={id}>{name}</li>
+      	    return <li key={id} onClick={() => selectPlaylist(id)}>{name}</li>
       		})
 					) : (
 						<Loader />

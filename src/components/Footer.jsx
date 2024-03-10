@@ -1,9 +1,14 @@
 import styled from "styled-components";
+import CurrentTrack from "./CurrentTrack";
+import PlayerControls from "./PlayerControls";
+import Volume from "./Volume";
 
 export default function Footer() {
     return (
       <Container>
-        <h2>Footer</h2>
+        <CurrentTrack />
+        <PlayerControls />
+        <Volume />
       </Container>
     );
 };

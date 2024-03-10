@@ -11,12 +11,6 @@ export default function Navbar({ navBackground }) {
   const { userInfo } = state;
   const { token } = useContext(StateContext);
 
-  // useEffect(() => {
-  //   getUserInfo().then(userInfo => {
-  //     dispatch({ type: TYPES.SET_USER, payload: userInfo })
-  //   });
-  // }, []);
-
   useEffect(() => {
     const getUserInfo = async () => {
       const { data } = await axios.get(
@@ -28,6 +22,7 @@ export default function Navbar({ navBackground }) {
           },
         }
       );
+      
       const userInfo = {
         userId: data.id,
         userUrl: data.external_urls.spotify,

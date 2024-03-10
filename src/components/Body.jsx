@@ -8,42 +8,79 @@ import axios from "axios";
 
 export default function Body() {
   const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
-  const { selectedPlaylistId, selectedPlaylist } = state;
-  const { token } = useContext(StateContext);
+  // const { selectedPlaylist } = state;
+  const { token, playlists, setSelectedPlaylist, selectedPlaylist } = useContext(StateContext);
+  
+  const getInitialPlaylist = async () => {
+    const response = await axios.get(
+      `https://api.spotify.com/v1/playlists/${playlists[0].id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    
+    const selectedPlaylist = {
+      id: response.data.id,
+      name: response.data.name,
+      description: response.data.description.startsWith("<a")
+        ? ""
+        : response.data.description,
+      image: response.data.images[0].url,
+      tracks: response.data.tracks.items.map(({ track }) => ({
+        id: track.id,
+        name: track.name,
+        artists: track.artists.map((artist) => artist.name),
+        image: track.album.images[2].url,
+        duration: track.duration_ms,
+        album: track.album.name,
+        context_uri: track.album.uri,
+        track_number: track.track_number,
+      })),
+    };
+
+    setSelectedPlaylist(selectedPlaylist);
+    dispatch({ type: TYPES.SET_PLAYLIST, payload: selectedPlaylist });
+  };
 
   useEffect(() => {
-    const getInitialPlaylist = async () => {
-      const response = await axios.get(
-        `https://api.spotify.com/v1/playlists/${selectedPlaylistId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const selectedPlaylist = {
-        id: response.data.id,
-        name: response.data.name,
-        description: response.data.description.startsWith("<a")
-          ? ""
-          : response.data.description,
-        image: response.data.images[0].url,
-        tracks: response.data.tracks.items.map(({ track }) => ({
-          id: track.id,
-          name: track.name,
-          artists: track.artists.map((artist) => artist.name),
-          image: track.album.images[2].url,
-          duration: track.duration_ms,
-          album: track.album.name,
-          context_uri: track.album.uri,
-          track_number: track.track_number,
-        })),
-      };
-      dispatch({ type: TYPES.SET_PLAYLIST, payload: selectedPlaylist });
-    };
     getInitialPlaylist();
-  }, [token, selectedPlaylistId]);
+  }, [playlists]);
+
+  const playTrack = async (id, name, artists, image, context_uri, track_number) => {
+    const response = await axios.put(
+      `https://api.spotify.com/v1/me/player/play`,
+      {
+        context_uri,
+        offset: {
+          position: track_number - 1,
+        },
+        position_ms: 0,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+      
+    if (response.status === 204) {
+      const currentPlaying = {
+        id,
+        name,
+        artists,
+        image,
+      };
+
+      dispatch({ type: TYPES.SET_PLAYING, payload: currentPlaying });
+      dispatch({ type: TYPES.SET_PLAYER_STATE, payload: true });
+    } else {
+      dispatch({ type: TYPES.SET_PLAYER_STATE, payload: true });
+    };
+  };
 
   const msToMinutesAndSeconds = (ms) => {
     var minutes = Math.floor(ms / 60000);
@@ -53,7 +90,7 @@ export default function Body() {
 
   return (
     <Container>
-      {selectedPlaylist && (
+      {selectedPlaylist !== null && (
         <>
           <div className="playlist">
             <div className="image">

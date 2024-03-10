@@ -28,9 +28,15 @@ export const spotifyReducer = (state, action) => {
         playlists: action.payload,
       };
     case TYPES.SET_PLAYING:
-      return {};
+      return {
+        ...state,
+        currentPlaying: action.payload,
+      };
     case TYPES.SET_PLAYER_STATE:
-      return {};
+      return {
+        ...state,
+        playerState: action.payload,
+      };
     case TYPES.SET_PLAYLIST:
       return {
         ...state,
