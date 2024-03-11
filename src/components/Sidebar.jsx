@@ -15,15 +15,15 @@ export default function Sidebar() {
         </div>
         <ul>
           <li>
-            <MdHomeFilled />
+            <MdHomeFilled className="icon" />
             <span>Home</span>
           </li>
           <li>
-            <MdSearch />
+            <MdSearch className="icon" />
             <span>Search</span>
           </li>
           <li>
-            <IoLibrary />
+            <IoLibrary className="icon" />
             <span>Your Library</span>
           </li>
         </ul>
@@ -66,6 +66,9 @@ const Container = styled.div`
           color: white;
         }
       }
+    }
+    .icon {
+      margin-top: 4px;
     }
   }
 `;

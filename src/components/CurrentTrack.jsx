@@ -7,8 +7,7 @@ import axios from "axios";
 
 export default function CurrentTrack() {
   const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
-  const { currentPlaying } = state;
-  const { token } = useContext(StateContext);
+  const { token, setCurrentTrack, currentTrack } = useContext(StateContext);
 
   useEffect(() => {
     const getCurrentTrack = async () => {
@@ -24,13 +23,14 @@ export default function CurrentTrack() {
         );
         console.log(response);
         if (response.data !== "") {
-          const currentPlaying = {
+          const currentTrack = {
             id: response.data.item.id,
             name: response.data.item.name,
             artists: response.data.item.artists.map((artist) => artist.name),
             image: response.data.item.album.images[2].url,
           };
-          dispatch({ type: TYPES.SET_PLAYING, payload: currentPlaying });
+          setCurrentTrack(currentTrack)
+          // dispatch({ type: TYPES.SET_PLAYING, payload: currentPlaying });
         } else {
           dispatch({ type: TYPES.SET_PLAYING, payload: null });
         };
@@ -43,15 +43,15 @@ export default function CurrentTrack() {
 
   return (
     <Container>
-      {currentPlaying && (
+      {currentTrack && (
         <div className="track">
           <div className="track__image">
-            <img src={currentPlaying.image} alt="currentPlaying" />
+            <img src={currentTrack.image} alt="currentPlaying" />
           </div>
           <div className="track__info">
-            <h4 className="track__info__track__name">{currentPlaying.name}</h4>
+            <h4 className="track__info__track__name">{currentTrack.name}</h4>
             <h6 className="track__info__track__artists">
-              {currentPlaying.artists.join(", ")}
+              {currentTrack.artists.join(", ")}
             </h6>
           </div>
         </div>

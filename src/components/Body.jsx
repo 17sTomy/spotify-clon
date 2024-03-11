@@ -9,7 +9,7 @@ import axios from "axios";
 export default function Body() {
   const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
   // const { selectedPlaylist } = state;
-  const { token, playlists, setSelectedPlaylist, selectedPlaylist } = useContext(StateContext);
+  const { token, playlists, setSelectedPlaylist, selectedPlaylist, setCurrentTrack } = useContext(StateContext);
   
   const getInitialPlaylist = async () => {
     const response = await axios.get(
@@ -42,7 +42,7 @@ export default function Body() {
     };
 
     setSelectedPlaylist(selectedPlaylist);
-    dispatch({ type: TYPES.SET_PLAYLIST, payload: selectedPlaylist });
+    // dispatch({ type: TYPES.SET_PLAYLIST, payload: selectedPlaylist });
   };
 
   useEffect(() => {
@@ -68,14 +68,15 @@ export default function Body() {
     );
       
     if (response.status === 204) {
-      const currentPlaying = {
+      const currentTrack = {
         id,
         name,
         artists,
         image,
       };
 
-      dispatch({ type: TYPES.SET_PLAYING, payload: currentPlaying });
+      setCurrentTrack(currentTrack);
+      dispatch({ type: TYPES.SET_PLAYING, payload: currentTrack });
       dispatch({ type: TYPES.SET_PLAYER_STATE, payload: true });
     } else {
       dispatch({ type: TYPES.SET_PLAYER_STATE, payload: true });
@@ -218,6 +219,7 @@ const Container = styled.div`
       flex-direction: column;
       margin-bottom: 5rem;
       .row {
+        cursor: pointer;
         padding: 0.5rem 1rem;
         display: grid;
         grid-template-columns: 0.3fr 3.1fr 2fr 0.1fr;

@@ -1,15 +1,11 @@
-import { useContext, useEffect, useReducer } from "react"
+import { useContext, useEffect } from "react"
 import StateContext from "../context/StateContext"
-import { TYPES } from "../actions/spotifyActions";
-import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
 import Loader from "../assets/Loader";
 import styled from "styled-components";
 import axios from 'axios';
 
 export default function Playlists() {
-  const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
-  const { playlists } = state;
-  const { token, setPlaylists, setSelectedPlaylist } = useContext(StateContext);
+  const { token, playlists, setPlaylists, setSelectedPlaylist } = useContext(StateContext);
 
   const selectPlaylist = async (id) => {
     console.log(id);
@@ -43,7 +39,7 @@ export default function Playlists() {
     };
 
     setSelectedPlaylist(selectedPlaylist);
-    dispatch({ type: TYPES.SET_PLAYLIST, payload: selectedPlaylist });
+    // dispatch({ type: TYPES.SET_PLAYLIST, payload: selectedPlaylist });
   };
 
   useEffect(() => {
@@ -64,7 +60,7 @@ export default function Playlists() {
         });
         console.log(playlists);
         setPlaylists(playlists)
-        dispatch({ type: TYPES.SET_PLAYLISTS, payload: playlists });
+        // dispatch({ type: TYPES.SET_PLAYLISTS, payload: playlists });
       } catch (error) {
         console.log("An error has ocurred: ", error);
       }

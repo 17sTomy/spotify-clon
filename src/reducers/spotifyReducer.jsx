@@ -42,8 +42,6 @@ export const spotifyReducer = (state, action) => {
         ...state,
         selectedPlaylist: action.payload,
       };
-    case TYPES.SET_PLAYLIST_ID:
-      return {};
     default:
       return state;
   };

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
 import StateContext from "../context/StateContext";
 import { IoMdVolumeHigh } from "react-icons/io";

@@ -9,6 +9,7 @@ const StateProvider = ({ children }) => {
   const { token } = state;
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [currentTrack, setCurrentTrack] = useState(null);
 
   const getAccessToken = async () => {
     const client_id = "593ebe3ad8e74156a28c6f7d9fdee82f";
@@ -42,6 +43,8 @@ const StateProvider = ({ children }) => {
     setPlaylists,
     selectedPlaylist, 
     setSelectedPlaylist,
+    currentTrack,
+    setCurrentTrack
   };
   
   return <StateContext.Provider value={data}>{children}</StateContext.Provider>
