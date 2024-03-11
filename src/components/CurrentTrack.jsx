@@ -1,12 +1,9 @@
-import { useReducer, useEffect, useContext } from "react"
+import { useEffect, useContext } from "react"
 import StateContext from "../context/StateContext";
-import { TYPES } from "../actions/spotifyActions";
-import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
 import styled from "styled-components";
 import axios from "axios";
 
 export default function CurrentTrack() {
-  const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
   const { token, setCurrentTrack, currentTrack } = useContext(StateContext);
 
   useEffect(() => {
@@ -21,7 +18,7 @@ export default function CurrentTrack() {
             },
           }
         );
-        console.log(response);
+
         if (response.data !== "") {
           const currentTrack = {
             id: response.data.item.id,
@@ -30,9 +27,8 @@ export default function CurrentTrack() {
             image: response.data.item.album.images[2].url,
           };
           setCurrentTrack(currentTrack)
-          // dispatch({ type: TYPES.SET_PLAYING, payload: currentPlaying });
         } else {
-          dispatch({ type: TYPES.SET_PLAYING, payload: null });
+          setCurrentTrack(null)
         };
       } catch (error) {
         console.log("An error has ocurred: ", error);

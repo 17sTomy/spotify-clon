@@ -16,7 +16,7 @@ Follow these steps to set up the Spotify Clone on your local machine:
    ```
    npm install
    ``` 
-3. Run the server:
+3. Run the server and then open http://localhost:5173/ in the browser:
    ```
    npm run dev
    ```

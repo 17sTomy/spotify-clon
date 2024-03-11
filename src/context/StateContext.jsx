@@ -1,18 +1,17 @@
-import { createContext, useReducer, useState } from "react";
-import { TYPES } from "../actions/spotifyActions";
-import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
+import { createContext, useState } from "react";
 
 const StateContext = createContext();
 
 const StateProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
-  const { token } = state;
+  const [token, setToken] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const [playerState, setPlayerState] = useState(false);
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [currentTrack, setCurrentTrack] = useState(null);
 
   const getAccessToken = async () => {
-    const client_id = "593ebe3ad8e74156a28c6f7d9fdee82f";
+    const client_id = import.meta.env.VITE_CLIENT_ID;
     const redirect_uri = "http://localhost:5173/";
     const api_uri = "https://accounts.spotify.com/authorize";
     const scope = [
@@ -27,24 +26,28 @@ const StateProvider = ({ children }) => {
     window.location.href = `${api_uri}?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope.join(" ")}&response_type=token&show_dialog=true`;
   };
 
-  const setToken = () => {
+  const setTheToken = () => {
     const hash = window.location.hash;
     if (hash) {
       const token = hash.substring(1).split("&")[0].split("=")[1];
-      dispatch({ type: TYPES.SET_TOKEN, payload: token });
+      setToken(token);
     };
   };
 
   const data = {
     token,
     getAccessToken,
-    setToken,
+    setTheToken,
+    userInfo,
+    setUserInfo,
+    playerState,
+    setPlayerState,
     playlists,
     setPlaylists,
     selectedPlaylist, 
     setSelectedPlaylist,
     currentTrack,
-    setCurrentTrack
+    setCurrentTrack,
   };
   
   return <StateContext.Provider value={data}>{children}</StateContext.Provider>

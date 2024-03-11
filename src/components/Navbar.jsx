@@ -1,15 +1,11 @@
-import { useContext, useEffect, useReducer } from "react";
+import { useContext, useEffect } from "react";
 import StateContext from "../context/StateContext"
-import { TYPES } from "../actions/spotifyActions";
-import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
 import styled from "styled-components";
 import { FaSearch } from "react-icons/fa";
 import axios from "axios";
 
 export default function Navbar({ navBackground }) {
-  const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
-  const { userInfo } = state;
-  const { token } = useContext(StateContext);
+  const { token, userInfo, setUserInfo } = useContext(StateContext);
 
   useEffect(() => {
     const getUserInfo = async () => {
@@ -29,9 +25,8 @@ export default function Navbar({ navBackground }) {
         name: data.display_name,
         image: data.images[0],
       };
-      dispatch({ type: TYPES.SET_USER, payload: userInfo })
+      setUserInfo(userInfo);
     };
-
     getUserInfo();
   });
 

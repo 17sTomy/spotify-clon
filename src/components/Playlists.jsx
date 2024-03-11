@@ -37,9 +37,7 @@ export default function Playlists() {
         track_number: track.track_number,
       })),
     };
-
     setSelectedPlaylist(selectedPlaylist);
-    // dispatch({ type: TYPES.SET_PLAYLIST, payload: selectedPlaylist });
   };
 
   useEffect(() => {
@@ -58,9 +56,7 @@ export default function Playlists() {
         const playlists = items.map(({ name, id }) => {
           return { name, id };
         });
-        console.log(playlists);
-        setPlaylists(playlists)
-        // dispatch({ type: TYPES.SET_PLAYLISTS, payload: playlists });
+        setPlaylists(playlists);
       } catch (error) {
         console.log("An error has ocurred: ", error);
       }

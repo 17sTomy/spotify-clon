@@ -1,19 +1,13 @@
-import { useReducer } from "react";
-import { TYPES } from "../actions/spotifyActions";
-import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
+import { useContext } from "react";
+import StateContext from "../context/StateContext";
 import styled from "styled-components";
-import {
-  BsFillPlayCircleFill,
-  BsFillPauseCircleFill,
-  BsShuffle,
-} from "react-icons/bs";
+import { BsFillPlayCircleFill, BsFillPauseCircleFill, BsShuffle } from "react-icons/bs";
 import { CgPlayTrackNext, CgPlayTrackPrev } from "react-icons/cg";
 import { FiRepeat } from "react-icons/fi";
 import axios from "axios";
 
 export default function PlayerControls() {
-  const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
-  const { token, playerState } = state;
+  const { token, setCurrentTrack, playerState, setPlayerState } = useContext(StateContext);
 
   const changeState = async () => {
     const state = playerState ? "pause" : "play";
@@ -27,8 +21,9 @@ export default function PlayerControls() {
         },
       }
     );
-    dispatch({type: TYPES.SET_PLAYER_STATE, payload: !playerState});
+    setPlayerState(!playerState);
   };
+
   const changeTrack = async (type) => {
     await axios.post(
       `https://api.spotify.com/v1/me/player/${type}`,
@@ -40,7 +35,9 @@ export default function PlayerControls() {
         },
       }
     );
-    dispatch({ type: TYPES.SET_PLAYER_STATE, payload: true });
+    
+    setPlayerState(true);
+
     const response1 = await axios.get(
       "https://api.spotify.com/v1/me/player/currently-playing",
       {
@@ -50,18 +47,16 @@ export default function PlayerControls() {
         },
       }
     );
-    
+
     if (response1.data !== "") {
-      const currentPlaying = {
+      const currentTrack = {
         id: response1.data.item.id,
         name: response1.data.item.name,
         artists: response1.data.item.artists.map((artist) => artist.name),
         image: response1.data.item.album.images[2].url,
       };
-      dispatch({ type: TYPES.SET_PLAYING, payload: currentPlaying });
-    } else {
-      dispatch({ type: TYPES.SET_PLAYING, payload: null });
-    }
+      setCurrentTrack(currentTrack);
+    };
   };
 
   return (

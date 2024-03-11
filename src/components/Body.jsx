@@ -1,15 +1,11 @@
-import { useEffect, useReducer, useContext } from "react";
+import { useEffect, useContext } from "react";
 import StateContext from "../context/StateContext";
-import { TYPES } from "../actions/spotifyActions";
-import { spotifyInitialState, spotifyReducer } from "../reducers/spotifyReducer";
 import styled from "styled-components";
 import { AiFillClockCircle } from "react-icons/ai";
 import axios from "axios";
 
 export default function Body() {
-  const [state, dispatch] = useReducer(spotifyReducer, spotifyInitialState);
-  // const { selectedPlaylist } = state;
-  const { token, playlists, setSelectedPlaylist, selectedPlaylist, setCurrentTrack } = useContext(StateContext);
+  const { token, playlists, setSelectedPlaylist, selectedPlaylist, setCurrentTrack, setPlayerState } = useContext(StateContext);
   
   const getInitialPlaylist = async () => {
     const response = await axios.get(
@@ -40,9 +36,7 @@ export default function Body() {
         track_number: track.track_number,
       })),
     };
-
     setSelectedPlaylist(selectedPlaylist);
-    // dispatch({ type: TYPES.SET_PLAYLIST, payload: selectedPlaylist });
   };
 
   useEffect(() => {
@@ -74,12 +68,10 @@ export default function Body() {
         artists,
         image,
       };
-
       setCurrentTrack(currentTrack);
-      dispatch({ type: TYPES.SET_PLAYING, payload: currentTrack });
-      dispatch({ type: TYPES.SET_PLAYER_STATE, payload: true });
+      setPlayerState(true);
     } else {
-      dispatch({ type: TYPES.SET_PLAYER_STATE, payload: true });
+      setPlayerState(true);
     };
   };
 

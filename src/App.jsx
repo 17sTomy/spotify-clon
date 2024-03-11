@@ -4,10 +4,10 @@ import StateContext from './context/StateContext';
 import Spotify from './components/Spotify';
 
 function App() {
-  const { token, setToken } = useContext(StateContext);
+  const { token, setTheToken } = useContext(StateContext);
 
   useEffect(() => {
-    setToken();
+    setTheToken();
   }, []);
 
   return (
